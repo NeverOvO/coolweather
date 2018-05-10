@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.neversayd1e.coolweather.android.db.City;
 import com.example.neversayd1e.coolweather.android.db.County;
 import com.example.neversayd1e.coolweather.android.db.Province;
+import com.example.neversayd1e.coolweather.android.gson.Weather;
 import com.example.neversayd1e.coolweather.android.util.HttpUtil;
 import com.example.neversayd1e.coolweather.android.util.Utility;
 
@@ -78,10 +79,18 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if (currentLevel ==LEVEL_COUNTY){
                     String weatherId =countyList.get(position).getWeatherId();
-                    Intent intent =new Intent(getActivity(),WeatherActivity.class);
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                    if(getActivity() instanceof MainActivity){
+                        Intent intent =new Intent(getActivity(),WeatherActivity.class);
+                        intent.putExtra("weather_id",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if(getActivity() instanceof WeatherActivity){
+                        WeatherActivity activity=(WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
                 }
             }
         });
